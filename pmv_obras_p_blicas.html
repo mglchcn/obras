@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMV - Control de Obras Públicas</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(100%)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Estilos personalizados para scrollbars y utilidades */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .tooltip-top { bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px; }
+        .tooltip-bottom { top: 100%; left: 50%; transform: translateX(-50%); margin-top: 8px; }
+        .tooltip-right { top: 50%; left: 100%; transform: translateY(-50%); margin-left: 8px; }
+        
+        .tooltip-arrow-top { bottom: -4px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid #1e293b; }
+        .tooltip-arrow-bottom { top: -4px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 4px solid #1e293b; }
+        .tooltip-arrow-right { left: -4px; top: 50%; transform: translateY(-50%); border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-right: 4px solid #1e293b; }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 h-screen flex flex-col md:flex-row overflow-hidden selection:bg-blue-200">
+
+    <aside class="w-full md:w-72 bg-slate-900 text-white flex flex-col shadow-2xl z-20 flex-shrink-0">
+        <div class="p-5 border-b border-slate-800 bg-slate-950/50">
+            <div class="flex items-center mb-2">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-blue-900/50">
+                    <i data-lucide="bar-chart-2" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight text-white leading-tight">PMV Obras</h1>
+                    <h2 class="text-xs text-blue-300 uppercase tracking-widest font-semibold">Estado Plurinacional</h2>
+                </div>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">Plataforma de Control Integral DS 0181 y Ley 1178</p>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-3 pl-2">Módulos de Control</p>
+            
+            <!-- Botón Dashboard -->
+            <div class="group relative inline-block w-full">
+                <button onclick="app.changeView('dashboard')" id="btn-view-dashboard" class="w-full text-left rounded-lg px-4 py-3 text-sm font-semibold flex items-center transition-all duration-200 bg-blue-600 text-white shadow-md shadow-blue-900/50">
+                    <i data-lucide="folder-open" id="icon-view-dashboard" class="w-5 h-5 mr-3 text-blue-200"></i> 
+                    Tablero de Proyectos
+                </button>
+                <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-xs px-3 py-2 rounded shadow-lg tooltip-right">
+                    Ir al Tablero Principal de Fases de Obra
+                    <div class="absolute tooltip-arrow-right"></div>
+                </div>
+            </div>
+
+            <!-- Botón EUDO -->
+            <div class="group relative inline-block w-full">
+                <button onclick="app.changeView('eudo')" id="btn-view-eudo" class="w-full text-left rounded-lg px-4 py-3 text-sm font-semibold flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="shield-check" id="icon-view-eudo" class="w-5 h-5 mr-3 text-slate-500"></i> 
+                    Archivo EUDO
+                </button>
+                <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-xs px-3 py-2 rounded shadow-lg tooltip-right">
+                    Acceder al Expediente Único Digital (Planos, Planillas)
+                    <div class="absolute tooltip-arrow-right"></div>
+                </div>
+            </div>
+
+            <!-- Botón Auditorías -->
+            <div class="group relative inline-block w-full">
+                <button onclick="app.changeView('auditorias')" id="btn-view-auditorias" class="w-full text-left rounded-lg px-4 py-3 text-sm font-semibold flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="search" id="icon-view-auditorias" class="w-5 h-5 mr-3 text-slate-500"></i> 
+                    Auditorías ATIA
+                </button>
+                <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-xs px-3 py-2 rounded shadow-lg tooltip-right">
+                    Ver o programar auditorías técnicas de medio término
+                    <div class="absolute tooltip-arrow-right"></div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="p-5 bg-slate-950/50 mt-auto border-t border-slate-800">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600 mr-3">
+                    <span class="text-xs font-bold text-slate-300">FO</span>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-slate-200">Fiscal de Obras</p>
+                    <p class="text-[10px] text-slate-500" id="current-date"></p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-slate-50/50 relative">
+        
+        <!-- Header Top -->
+        <header class="bg-white border-b border-slate-200 px-6 py-4 shadow-sm z-10 flex-shrink-0">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex-1 max-w-3xl">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span id="header-status-badge"></span>
+                        
+                        <div class="group relative inline-block">
+                            <button onclick="app.toggleProjectModal()" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg px-3 py-1.5 transition-colors shadow-sm">
+                                <i data-lucide="search" class="w-4 h-4 text-slate-500"></i>
+                                Cambiar Proyecto <span id="header-db-count"></span>
+                            </button>
+                            <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-xs px-3 py-2 rounded shadow-lg tooltip-bottom">
+                                Buscar y filtrar en el universo de proyectos
+                                <div class="absolute tooltip-arrow-bottom"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 id="header-project-name" class="text-2xl font-extrabold text-slate-800 leading-tight"></h2>
+                    <div class="flex flex-wrap text-sm text-slate-500 mt-2 gap-x-6 gap-y-1">
+                        <span class="flex items-center">
+                            <i data-lucide="users" class="w-4 h-4 mr-1.5 text-slate-400"></i> 
+                            <span class="font-semibold text-slate-700 mr-1">Contratista:</span> 
+                            <span id="header-contractor"></span>
+                        </span>
+                        <span class="flex items-center">
+                            <i data-lucide="activity" class="w-4 h-4 mr-1.5 text-slate-400"></i> 
+                            <span class="font-semibold text-slate-700 mr-1">Presupuesto Vigente:</span> 
+                            Bs <span id="header-budget"></span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <div class="group relative inline-block">
+                        <button onclick="app.showToast('Generando reporte PDF del estado actual...', 'info')" class="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-200">
+                            <i data-lucide="download" class="w-5 h-5"></i>
+                        </button>
+                        <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-xs px-3 py-2 rounded shadow-lg tooltip-bottom">
+                            Imprimir reporte PDF
+                            <div class="absolute tooltip-arrow-bottom"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 scroll-smooth" id="main-dynamic-content">
+            <!-- Content injected via JS -->
+        </div>
+    </main>
+
+    <!-- Modal de Búsqueda de Proyectos -->
+    <div id="project-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Directorio de Proyectos</h3>
+                    <p class="text-xs text-slate-500">Utilice los filtros para explorar el universo de obras</p>
+                </div>
+                <button onclick="app.toggleProjectModal()" class="text-slate-400 hover:text-rose-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+                <!-- Panel de Filtros -->
+                <div class="w-full md:w-72 bg-slate-50 border-r border-slate-200 p-4 flex flex-col gap-4 overflow-y-auto">
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1 block">Búsqueda Global</label>
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                            <input type="text" id="filter-search" oninput="app.updateFilters()" placeholder="ID, Nombre o Contratista..." class="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1 block">Estado Físico</label>
+                        <select id="filter-status" onchange="app.updateFilters()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer">
+                            <option value="Todos">Todos los estados</option>
+                            <option value="En Curso">En Curso (&lt; 100%)</option>
+                            <option value="Concluido">Concluido (100%)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1 block">Rango de Monto (Bs.)</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="filter-min-budget" oninput="app.updateFilters()" placeholder="Mínimo" class="w-1/2 px-2 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="number" id="filter-max-budget" oninput="app.updateFilters()" placeholder="Máximo" class="w-1/2 px-2 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1 block">Rango de Fecha (Inicio)</label>
+                        <div class="flex gap-2">
+                            <input type="date" id="filter-min-date" onchange="app.updateFilters()" class="w-1/2 px-1 py-2 text-[11px] border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-600" title="Fecha inicial mínima">
+                            <input type="date" id="filter-max-date" onchange="app.updateFilters()" class="w-1/2 px-1 py-2 text-[11px] border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-600" title="Fecha inicial máxima">
+                        </div>
+                    </div>
+
+                    <button onclick="app.clearFilters()" class="mt-auto flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors shadow-sm">
+                        <i data-lucide="filter" class="w-4 h-4"></i> Limpiar Filtros
+                    </button>
+                </div>
+
+                <!-- Lista de Resultados -->
+                <div class="flex-1 overflow-y-auto p-4 bg-slate-100">
+                    <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-3">
+                        <span id="modal-result-count">Mostrando 0 proyectos</span>
+                    </div>
+                    <div id="modal-results-container" class="grid gap-3">
+                        <!-- Listado dinámico -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        // Set current date in sidebar
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-BO');
+
+        // MOCK DATA
+        const mockProjects = [
+            {
+                id: "PRJ-2026-001",
+                name: "Construcción Hospital Nivel II - Distrito Sur",
+                contratista: "Constructora Andes S.R.L.",
+                budgetOriginal: 15000000,
+                budgetActual: 15750000,
+                startDate: "2026-01-15",
+                advanceFisicoReal: 42.5,
+                advanceFisicoProgramado: 48.0,
+                hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
+                mct: { liberacion: true, suelos: true, computos: true, precios: true },
+                fase2Docs: { libroOrdenes: "Al día", dossierCalidad: "Aprobado" },
+                fase3Cierre: { asBuilt: false, manual: false, liquidacion: false, estado: "Pendiente" },
+                fase4Safco: { atia: "Programada", rendicion: "Pendiente" },
+                modifications: [
+                    { type: "Orden de Trabajo 01", amount: 0, date: "2026-03-10", percent: 0 },
+                    { type: "Orden de Cambio 01", amount: 750000, date: "2026-05-22", percent: 5 }
+                ]
+            },
+            {
+                id: "PRJ-2026-002",
+                name: "Asfaltado Ruta Departamental 24",
+                contratista: "Vialidad Nacional S.A.",
+                budgetOriginal: 32000000,
+                budgetActual: 32000000,
+                startDate: "2026-02-01",
+                advanceFisicoReal: 25.2,
+                advanceFisicoProgramado: 38.0, // Retraso crítico > 10%
+                hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
+                mct: { liberacion: true, suelos: false, computos: true, precios: true },
+                fase2Docs: { libroOrdenes: "Desactualizado", dossierCalidad: "Observado" },
+                fase3Cierre: { asBuilt: false, manual: false, liquidacion: false, estado: "Pendiente" },
+                fase4Safco: { atia: "En Ejecución", rendicion: "Realizada" },
+                modifications: []
+            },
+            {
+                id: "PRJ-2025-003",
+                name: "Unidad Educativa 'Simón Bolívar'",
+                contratista: "Constructora Horizonte",
+                budgetOriginal: 5500000,
+                budgetActual: 5775000,
+                startDate: "2025-08-10",
+                advanceFisicoReal: 100,
+                advanceFisicoProgramado: 100,
+                hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
+                mct: { liberacion: true, suelos: true, computos: true, precios: true },
+                fase2Docs: { libroOrdenes: "Cerrado", dossierCalidad: "Completo" },
+                fase3Cierre: { asBuilt: true, manual: true, liquidacion: true, estado: "Recepción Definitiva" },
+                fase4Safco: { atia: "Concluida", rendicion: "Realizada" },
+                modifications: [
+                    { type: "Orden de Cambio 01", amount: 275000, date: "2025-11-15", percent: 5 }
+                ]
+            },
+            {
+                id: "PRJ-2026-004",
+                name: "Sistema de Agua Potable - Comunidad Norte",
+                contratista: "Aguas Claras S.A.",
+                budgetOriginal: 1200000,
+                budgetActual: 1200000,
+                startDate: "2026-06-10",
+                advanceFisicoReal: 15.0,
+                advanceFisicoProgramado: 14.5,
+                hitosFase1: { designacion: true, terreno: true, mct: false, ordenProceder: false },
+                mct: { liberacion: true, suelos: true, computos: true, precios: true },
+                fase2Docs: { libroOrdenes: "Al día", dossierCalidad: "En proceso" },
+                fase3Cierre: { asBuilt: false, manual: false, liquidacion: false, estado: "Pendiente" },
+                fase4Safco: { atia: "No Programada", rendicion: "Pendiente" },
+                modifications: []
+            },
+            {
+                id: "PRJ-2025-089",
+                name: "Construcción Puente Vehicular 'El Carmen'",
+                contratista: "Consorcio Puentes de Bolivia",
+                budgetOriginal: 8500000,
+                budgetActual: 9100000,
+                startDate: "2025-01-15",
+                advanceFisicoReal: 100,
+                advanceFisicoProgramado: 100,
+                hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
+                mct: { liberacion: true, suelos: true, computos: true, precios: true },
+                fase2Docs: { libroOrdenes: "Cerrado", dossierCalidad: "Completo" },
+                fase3Cierre: { asBuilt: true, manual: true, liquidacion: true, estado: "Recepción Definitiva" },
+                fase4Safco: { atia: "Concluida", rendicion: "Realizada" },
+                modifications: [
+                    { type: "Contrato Modificatorio 01", amount: 600000, date: "2025-08-10", percent: 7.05 }
+                ]
+            }
+        ];
+
+        const eudoFiles = [
+            { id: 1, name: "Estudio de Diseño Técnico de Preinversión (EDTP).pdf", date: "10/01/2026", type: "Técnico" },
+            { id: 2, name: "Contrato Principal 045-2026.pdf", date: "12/01/2026", type: "Legal" },
+            { id: 3, name: "Planilla de Avance N° 01.pdf", date: "15/02/2026", type: "Financiero" },
+            { id: 4, name: "Dossier de Calidad - Hormigones.pdf", date: "28/02/2026", type: "Técnico" },
+        ];
+
+        const auditData = [
+            { id: "ATIA-001", date: "05/03/2026", type: "Control de Medio Término", status: "Concluido", findings: 2 },
+            { id: "ATIA-002", date: "15/05/2026", type: "Inspección Sorpresa (Densidades)", status: "En Proceso", findings: 0 },
+        ];
+
+        // GLOBAL STATE
+        const state = {
+            currentView: 'dashboard', // dashboard, eudo, auditorias
+            activeTab: 1, // 1 to 4
+            selectedProjectId: mockProjects[0].id,
+            modalOpen: false,
+            filters: {
+                search: '',
+                status: 'Todos',
+                minBudget: '',
+                maxBudget: '',
+                minDate: '',
+                maxDate: ''
+            }
+        };
+
+        const app = {
+            init() {
+                this.renderAll();
+                lucide.createIcons();
+            },
+
+            // --- UI ACTIONS ---
+            changeView(view) {
+                state.currentView = view;
+                this.renderAll();
+            },
+
+            changeTab(tabIndex) {
+                state.activeTab = tabIndex;
+                this.renderMainContent();
+                lucide.createIcons();
+            },
+
+            selectProject(id) {
+                state.selectedProjectId = id;
+                state.activeTab = 1;
+                this.toggleProjectModal();
+                this.renderAll();
+                this.showToast(`Proyecto cambiado exitosamente a: ${id}`, 'success');
+            },
+
+            toggleProjectModal() {
+                state.modalOpen = !state.modalOpen;
+                const modal = document.getElementById('project-modal');
+                if (state.modalOpen) {
+                    modal.classList.remove('hidden');
+                    this.renderModalList();
+                } else {
+                    modal.classList.add('hidden');
+                }
+            },
+
+            showToast(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-blue-600';
+                const iconName = type === 'success' ? 'check-circle' : 'info';
+                
+                toast.className = `flex items-center ${bgColor} text-white px-4 py-3 rounded-lg shadow-xl animate-slide-up transition-opacity duration-300`;
+                toast.innerHTML = `
+                    <i data-lucide="${iconName}" class="w-5 h-5 mr-2"></i>
+                    <span class="font-medium text-sm">${message}</span>
+                    <button onclick="this.parentElement.remove()" class="ml-4 hover:text-slate-200"><i data-lucide="x" class="w-4 h-4"></i></button>
+                `;
+                container.appendChild(toast);
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            },
+
+            // --- FILTER LOGIC ---
+            updateFilters() {
+                state.filters.search = document.getElementById('filter-search').value.toLowerCase();
+                state.filters.status = document.getElementById('filter-status').value;
+                state.filters.minBudget = document.getElementById('filter-min-budget').value;
+                state.filters.maxBudget = document.getElementById('filter-max-budget').value;
+                state.filters.minDate = document.getElementById('filter-min-date').value;
+                state.filters.maxDate = document.getElementById('filter-max-date').value;
+                this.renderModalList();
+            },
+
+            clearFilters() {
+                document.getElementById('filter-search').value = '';
+                document.getElementById('filter-status').value = 'Todos';
+                document.getElementById('filter-min-budget').value = '';
+                document.getElementById('filter-max-budget').value = '';
+                document.getElementById('filter-min-date').value = '';
+                document.getElementById('filter-max-date').value = '';
+                this.updateFilters();
+            },
+
+            renderAll() {
+                this.updateSidebarNav();
+                this.renderHeader();
+                this.renderMainContent();
+                lucide.createIcons();
+            },
+
+            updateSidebarNav() {
+                const views = ['dashboard', 'eudo', 'auditorias'];
+                views.forEach(v => {
+                    const btn = document.getElementById(`btn-view-${v}`);
+                    const icon = document.getElementById(`icon-view-${v}`);
+                    if (state.currentView === v) {
+                        btn.className = "w-full text-left rounded-lg px-4 py-3 text-sm font-semibold flex items-center transition-all duration-200 bg-blue-600 text-white shadow-md shadow-blue-900/50";
+                        icon.className = `w-5 h-5 mr-3 text-blue-200`;
+                    } else {
+                        btn.className = "w-full text-left rounded-lg px-4 py-3 text-sm font-semibold flex items-center transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-800";
+                        icon.className = `w-5 h-5 mr-3 text-slate-500`;
+                    }
+                });
+            },
+
+            renderHeader() {
+                const project = mockProjects.find(p => p.id === state.selectedProjectId);
+                const isFinished = project.advanceFisicoReal >= 100;
+                
+                const badge = isFinished 
+                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold border bg-slate-100 text-slate-800 border-slate-200">Concluido</span>`
+                    : `<span class="px-2.5 py-1 rounded-full text-xs font-bold border bg-blue-100 text-blue-800 border-blue-200">En Curso</span>`;
+
+                document.getElementById('header-status-badge').innerHTML = badge;
+                document.getElementById('header-db-count').textContent = `(${mockProjects.length} BD)`;
+                document.getElementById('header-project-name').textContent = project.name;
+                document.getElementById('header-contractor').textContent = project.contratista;
+                document.getElementById('header-budget').textContent = project.budgetActual.toLocaleString('es-BO');
+            },
+
+            renderMainContent() {
+                const container = document.getElementById('main-dynamic-content');
+                const project = mockProjects.find(p => p.id === state.selectedProjectId);
+
+                if (state.currentView === 'dashboard') {
+                    container.innerHTML = `
+                        <div class="max-w-7xl mx-auto flex flex-col h-full animate-fade-in">
+                            ${this.getDashboardTabsHTML()}
+                            <div class="flex-1 pb-10 mt-6">
+                                ${this.getFaseContentHTML(project)}
+                            </div>
+                        </div>
+                    `;
+                } else if (state.currentView === 'eudo') {
+                    container.innerHTML = this.getEudoHTML();
+                } else if (state.currentView === 'auditorias') {
+                    container.innerHTML = this.getAuditoriasHTML();
+                }
+            },
+
+            getDashboardTabsHTML() {
+                const tabs = [
+                    { id: 1, name: 'Fase 1: Inicio', icon: 'file-text', tooltip: 'Validación técnica y legal de arranque' },
+                    { id: 2, name: 'Fase 2: Ejecución', icon: 'activity', tooltip: 'Control físico, financiero y modificaciones' },
+                    { id: 3, name: 'Fase 3: Cierre', icon: 'check-circle', tooltip: 'Recepciones y liquidación de obra' },
+                    { id: 4, name: 'Fase 4: Responsabilidad', icon: 'shield-alert', tooltip: 'Régimen legal Ley 1178 (SAFCO)' }
+                ];
+
+                let tabsHTML = `<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1 flex overflow-visible flex-shrink-0 relative">`;
+                
+                tabs.forEach(tab => {
+                    const isActive = state.activeTab === tab.id;
+                    const activeClass = isActive 
+                        ? 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100' 
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 border border-transparent';
+                    
+                    tabsHTML += `
+                        <div class="group relative inline-flex flex-1 min-w-[150px]">
+                            <button onclick="app.changeTab(${tab.id})" class="flex items-center justify-center w-full px-4 py-3 text-sm font-bold rounded-lg transition-all duration-200 ${activeClass}">
+                                <i data-lucide="${tab.icon}" class="w-4 h-4 mr-2"></i> ${tab.name}
+                            </button>
+                            <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-[11px] px-3 py-2 rounded shadow-lg tooltip-bottom">
+                                ${tab.tooltip}
+                                <div class="absolute tooltip-arrow-bottom"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                tabsHTML += `</div>`;
+                return tabsHTML;
+            },
+
+            getFaseContentHTML(project) {
+                if (state.activeTab === 1) return this.renderFase1(project);
+                if (state.activeTab === 2) return this.renderFase2(project);
+                if (state.activeTab === 3) return this.renderFase3(project);
+                if (state.activeTab === 4) return this.renderFase4(project);
+                return '';
+            },
+
+            renderFase1(project) {
+                const getStatusClass = (status, isAmber = false) => status 
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+                    : (isAmber ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-slate-50 border-slate-200 text-slate-600');
+                
+                const getRowStatus = (status, textOk, textErr, isAmber = false) => status
+                    ? `<span class="text-emerald-600 font-bold flex items-center"><i data-lucide="check" class="w-4 h-4 mr-1"></i> ${textOk}</span>`
+                    : `<span class="${isAmber ? 'text-amber-600' : 'text-rose-600'} font-bold flex items-center"><i data-lucide="${isAmber ? 'alert-triangle' : 'x'}" class="w-4 h-4 mr-1"></i> ${textErr}</span>`;
+
+                return `
+                    <div class="space-y-6 animate-fade-in">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i data-lucide="file-text" class="w-5 h-5 mr-2 text-blue-600"></i> Hitos Legales de Inicio (DS 0181)</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="p-4 rounded-lg border ${getStatusClass(project.hitosFase1.designacion)}">
+                                    <div class="flex items-center gap-2 mb-2"><i data-lucide="check-circle" class="w-4 h-4"></i> <span class="text-xs font-bold uppercase">Hito 1</span></div>
+                                    <div class="text-sm font-medium">Designación Fiscal y Supervisor</div>
+                                </div>
+                                <div class="p-4 rounded-lg border ${getStatusClass(project.hitosFase1.terreno)}">
+                                    <div class="flex items-center gap-2 mb-2"><i data-lucide="check-circle" class="w-4 h-4"></i> <span class="text-xs font-bold uppercase">Hito 2</span></div>
+                                    <div class="text-sm font-medium">Acta Entrega de Terreno Libre</div>
+                                </div>
+                                <div class="p-4 rounded-lg border ${getStatusClass(project.hitosFase1.mct, true)}">
+                                    <div class="flex items-center gap-2 mb-2"><i data-lucide="check-circle" class="w-4 h-4"></i> <span class="text-xs font-bold uppercase">Hito 3</span></div>
+                                    <div class="text-sm font-medium">Cronograma y MCT Validada</div>
+                                </div>
+                                <div class="p-4 rounded-lg border ${getStatusClass(project.hitosFase1.ordenProceder)}">
+                                    <div class="flex items-center gap-2 mb-2"><i data-lucide="check-circle" class="w-4 h-4"></i> <span class="text-xs font-bold uppercase">Hito 4</span></div>
+                                    <div class="text-sm font-medium">Emisión Orden de Proceder</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-slate-800 flex items-center"><i data-lucide="search" class="w-5 h-5 mr-2 text-blue-600"></i> Matriz de Consistencia Técnica (MCT)</h3>
+                                
+                                <div class="group relative inline-block">
+                                    <button onclick="app.showToast('Validando MCT y generando acta...', 'info')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors shadow-sm">Validar MCT</button>
+                                    <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-[11px] px-3 py-2 rounded shadow-lg tooltip-top">
+                                        Aprobar y reportar al SICOES
+                                        <div class="absolute tooltip-arrow-top"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4">Cruce de información entre el Estudio de Preinversión (EDTP) y la realidad física antes de iniciar. (Plazo 15 días).</p>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                            <th class="p-3 font-bold w-1/2">Componente Evaluado</th>
+                                            <th class="p-3 font-bold w-1/2">Estado y Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-100">
+                                            <td class="p-3 font-medium text-slate-700">1. Liberación y disponibilidad real del terreno</td>
+                                            <td class="p-3">${getRowStatus(project.mct.liberacion, 'Cumple (Sin Conflictos)', 'Observado (Riesgo Legal)')}</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-100">
+                                            <td class="p-3 font-medium text-slate-700">2. Estudios de suelos y capacidad portante</td>
+                                            <td class="p-3">${getRowStatus(project.mct.suelos, 'Cumple (SPT Validado)', 'Riesgo: Requiere Ajuste Diseño', true)}</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-100">
+                                            <td class="p-3 font-medium text-slate-700">3. Cómputos métricos y planillas DBC</td>
+                                            <td class="p-3">${getRowStatus(project.mct.computos, 'Cumple (Ajuste Geométrico)', 'Faltan Volúmenes')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-3 font-medium text-slate-700">4. Precios Unitarios y Especificaciones Técnicas</td>
+                                            <td class="p-3">${getRowStatus(project.mct.precios, 'Cumple (APU Completo)', 'Observado - Precios desfasados')}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderFase2(project) {
+                const desviacion = project.advanceFisicoProgramado - project.advanceFisicoReal;
+                let semaforo = { color: 'bg-emerald-500 shadow-emerald-500/50', text: 'Normal (< 5%)', desc: 'Continuar con monitoreo ordinario en Libro de Órdenes.', icon: 'check-circle', iconColor: 'text-emerald-600', badge: 'bg-emerald-100 text-emerald-800 border-emerald-200' };
+                
+                if (desviacion > 5 && desviacion <= 10) {
+                    semaforo = { color: 'bg-amber-500 shadow-amber-500/50', text: 'Alerta (5% - 10%)', desc: 'Requiere Plan de Contingencia y Aceleración del Contratista en 48 hrs.', icon: 'alert-triangle', iconColor: 'text-amber-600', badge: 'bg-amber-100 text-amber-800 border-amber-200' };
+                } else if (desviacion > 10) {
+                    semaforo = { color: 'bg-rose-600 shadow-rose-600/50', text: 'Crítico (> 10%)', desc: 'Convocatoria a Comité Técnico. Riesgo de Resolución de Contrato o Multas.', icon: 'alert-octagon', iconColor: 'text-rose-600', badge: 'bg-rose-100 text-rose-800 border-rose-200' };
+                }
+
+                let modsHTML = '';
+                if(project.modifications.length === 0) {
+                    modsHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 italic">No existen modificaciones contractuales emitidas.</td></tr>`;
+                } else {
+                    project.modifications.forEach(mod => {
+                        let limit = mod.type.includes("Trabajo") ? "0% incremento" : mod.type.includes("Cambio") ? "Hasta 10%" : "Hasta 5% (Total 15%)";
+                        modsHTML += `
+                            <tr class="border-b border-slate-100">
+                                <td class="p-3 font-medium text-slate-800">${mod.type}</td>
+                                <td class="p-3 text-slate-600 text-xs">${limit}</td>
+                                <td class="p-3 font-bold text-slate-700 text-sm">Bs. ${mod.amount.toLocaleString('es-BO')} (${mod.percent}%)</td>
+                                <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] uppercase font-bold">${mod.type.includes("Cambio") || mod.type.includes("Contrato") ? 'MAE / Delegado' : 'Supervisor'}</span></td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                return `
+                    <div class="space-y-6 animate-fade-in">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Control Físico -->
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center">
+                                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center"><i data-lucide="activity" class="w-5 h-5 mr-2 text-blue-600"></i> Avance de Obra</h3>
+                                
+                                <div class="w-full mb-5">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-semibold text-slate-700">Avance Físico Real (Validado)</span>
+                                        <span class="text-sm font-bold text-slate-900">${project.advanceFisicoReal.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
+                                        <div class="h-full rounded-full bg-blue-600 transition-all duration-1000" style="width: ${project.advanceFisicoReal}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="w-full mb-4">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-semibold text-slate-700">Avance Programado (Según Cronograma)</span>
+                                        <span class="text-sm font-bold text-slate-900">${project.advanceFisicoProgramado.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
+                                        <div class="h-full rounded-full bg-slate-400 transition-all duration-1000" style="width: ${project.advanceFisicoProgramado}%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6">
+                                    <div class="group relative inline-block w-full">
+                                        <button onclick="app.showToast('Planilla enviada para pago administrativo', 'success')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors">Aprobar Planilla de Pago</button>
+                                        <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-[11px] px-3 py-2 rounded shadow-lg tooltip-top">
+                                            Genera informe de conformidad (Ley 1178)
+                                            <div class="absolute tooltip-arrow-top"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Semáforo -->
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i data-lucide="alert-circle" class="w-5 h-5 mr-2 text-blue-600"></i> Ficha de Alerta Temprana</h3>
+                                <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4">
+                                    <div class="w-4 h-4 rounded-full mt-1 flex-shrink-0 shadow-lg animate-pulse-slow ${semaforo.color}"></div>
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${semaforo.badge}">DESVIACIÓN: ${desviacion > 0 ? desviacion.toFixed(1) : 0}%</span>
+                                            <span class="font-bold text-slate-800 text-sm">${semaforo.text}</span>
+                                        </div>
+                                        <p class="text-xs text-slate-600 mt-1">${semaforo.desc}</p>
+                                    </div>
+                                    <div class="ml-auto flex-shrink-0 opacity-80"><i data-lucide="${semaforo.icon}" class="w-8 h-8 ${semaforo.iconColor}"></i></div>
+                                </div>
+                                
+                                <h4 class="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-2 border-t pt-3">Control Documental Previo (Ley 1178)</h4>
+                                <ul class="text-sm text-slate-600 space-y-2">
+                                    <li class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100">
+                                        <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2 text-slate-400"></i> Libro de Órdenes:</span> 
+                                        <span class="font-semibold text-slate-800">${project.fase2Docs.libroOrdenes}</span>
+                                    </li>
+                                    <li class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100">
+                                        <span class="flex items-center"><i data-lucide="flask-conical" class="w-4 h-4 mr-2 text-slate-400"></i> Dossier de Calidad:</span> 
+                                        <span class="font-semibold text-slate-800">${project.fase2Docs.dossierCalidad}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Modificaciones -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-2 flex items-center"><i data-lucide="briefcase" class="w-5 h-5 mr-2 text-blue-600"></i> Gestión de Modificaciones (Límites DS 0181)</h3>
+                            <p class="text-xs text-slate-500 mb-4">Control estricto de límites financieros para evitar vicios de nulidad o daño económico.</p>
+                            
+                            <div class="overflow-x-auto border rounded-lg mb-4">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-700 text-xs uppercase tracking-wider">
+                                            <th class="p-3 font-bold border-b border-slate-200">Instrumento</th>
+                                            <th class="p-3 font-bold border-b border-slate-200">Límite Legal</th>
+                                            <th class="p-3 font-bold border-b border-slate-200">Monto Aprobado</th>
+                                            <th class="p-3 font-bold border-b border-slate-200">Instancia Aprobación</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${modsHTML}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="group relative inline-block">
+                                <button onclick="app.showToast('Iniciando trámite de modificación...', 'info')" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors">Tramitar Nueva Modificación</button>
+                                <div class="absolute z-50 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap bg-slate-800 text-white text-[11px] px-3 py-2 rounded shadow-lg tooltip-top">
+                                    Crear Orden de Cambio / Contrato Modificatorio
+                                    <div class="absolute tooltip-arrow-top"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderFase3(project) {
+                const isFinal = project.fase3Cierre.estado === 'Recepción Definitiva';
+                return `
+                    <div class="space-y-6 animate-fade-in">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-2 flex items-center"><i data-lucide="check-circle" class="w-5 h-5 mr-2 text-blue-600"></i> Proceso de Recepción de Obra (DS 0181)</h3>
+                            <p class="text-sm text-slate-600 mb-8">El cierre extingue obligaciones ordinarias y transfiere riesgos al Estado Plurinacional.</p>
+                            
+                            <div class="relative max-w-4xl mx-auto">
+                                <div class="absolute top-8 left-8 right-8 h-1 bg-slate-200 rounded-full hidden md:block"></div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                                    <div class="bg-white p-4 rounded-xl border-2 border-emerald-500 shadow-md">
+                                        <div class="w-8 h-8 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center mb-3">1</div>
+                                        <h4 class="font-bold text-slate-800 mb-1">Recepción Provisional</h4>
+                                        <p class="text-[11px] text-slate-500 mb-4 h-10">Inspección de conclusión y fijación de plazo de subsanación de defectos.</p>
+                                        <button onclick="app.showToast('Acta Provisional Generada')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Generar Acta</button>
+                                    </div>
+                                    
+                                    <div class="bg-white p-4 rounded-xl border-2 border-blue-400 shadow-md">
+                                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mb-3">2</div>
+                                        <h4 class="font-bold text-slate-800 mb-1">Comisión de Recepción</h4>
+                                        <p class="text-[11px] text-slate-500 mb-4 h-10">Conformación de delegados (Técnico, Financiero y Beneficiario).</p>
+                                        <button onclick="app.showToast('Convocando Comisión', 'info')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Conformar Comisión</button>
+                                    </div>
+
+                                    <div class="bg-white p-4 rounded-xl border-2 shadow-md ${isFinal ? 'border-emerald-500' : 'border-slate-300'}">
+                                        <div class="w-8 h-8 rounded-full font-bold flex items-center justify-center mb-3 ${isFinal ? 'bg-emerald-500 text-white' : 'bg-slate-300 text-slate-600'}">3</div>
+                                        <h4 class="font-bold text-slate-800 mb-1">Recepción Definitiva</h4>
+                                        <p class="text-[11px] text-slate-500 mb-4 h-10">Subsanación verificada. Emisión de informe final y liberación de garantías.</p>
+                                        <button onclick="app.showToast('Emitiendo Acta Definitiva', 'success')" class="w-full px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${isFinal ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">Firmar Recepción Final</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i data-lucide="file-lock-2" class="w-5 h-5 mr-2 text-blue-600"></i> Requisitos Obligatorios para Liquidación</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="p-4 border rounded-lg flex items-center justify-between ${project.fase3Cierre.asBuilt ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
+                                    <div>
+                                        <h4 class="font-bold text-sm text-slate-800">Planos As-Built</h4>
+                                        <p class="text-[10px] text-slate-500 mt-0.5">Reflejo exacto de construcción</p>
+                                    </div>
+                                    <i data-lucide="${project.fase3Cierre.asBuilt ? 'check-circle' : 'x'}" class="w-5 h-5 ${project.fase3Cierre.asBuilt ? 'text-emerald-600' : 'text-slate-400'}"></i>
+                                </div>
+                                <div class="p-4 border rounded-lg flex items-center justify-between ${project.fase3Cierre.manual ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
+                                    <div>
+                                        <h4 class="font-bold text-sm text-slate-800">Manual Mantenimiento</h4>
+                                        <p class="text-[10px] text-slate-500 mt-0.5">Operación y cuidado</p>
+                                    </div>
+                                    <i data-lucide="${project.fase3Cierre.manual ? 'check-circle' : 'x'}" class="w-5 h-5 ${project.fase3Cierre.manual ? 'text-emerald-600' : 'text-slate-400'}"></i>
+                                </div>
+                                <div class="p-4 border rounded-lg flex items-center justify-between ${project.fase3Cierre.liquidacion ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'}">
+                                    <div>
+                                        <h4 class="font-bold text-sm text-slate-800">Planilla Liquidación</h4>
+                                        <p class="text-[10px] text-slate-500 mt-0.5">Cierre financiero final</p>
+                                    </div>
+                                    <i data-lucide="${project.fase3Cierre.liquidacion ? 'check-circle' : 'x'}" class="w-5 h-5 ${project.fase3Cierre.liquidacion ? 'text-emerald-600' : 'text-slate-400'}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderFase4(project) {
+                const getAtiaStyle = (txt) => (txt.includes('Programada') || txt.includes('Ejecución')) ? 'bg-amber-100 text-amber-800' : (txt.includes('No') ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-800');
+                return `
+                    <div class="space-y-6 animate-fade-in">
+                        <div class="bg-rose-50 border border-rose-200 p-6 rounded-xl shadow-sm relative overflow-hidden">
+                            <div class="absolute -right-10 -top-10 opacity-5 pointer-events-none">
+                                <i data-lucide="shield-alert" class="w-48 h-48"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-rose-900 mb-2 flex items-center relative z-10"><i data-lucide="shield-alert" class="w-5 h-5 mr-2 text-rose-600"></i> Régimen de Responsabilidad por la Función Pública (Ley 1178)</h3>
+                            <p class="text-sm text-rose-800 mb-6 relative z-10">El ejercicio técnico en obras del Estado no prescribe inmediatamente y está sujeto a auditorías de la CGE.</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                                <div class="bg-white p-4 rounded-lg border border-rose-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <h4 class="font-black text-rose-800 text-[13px] uppercase tracking-wide mb-1 border-b border-rose-100 pb-1">Administrativa</h4>
+                                    <p class="text-[11px] text-slate-600 mt-2 leading-relaxed">Por negligencia en manejo del Libro de Órdenes o vencimiento de garantías.</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-rose-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <h4 class="font-black text-rose-800 text-[13px] uppercase tracking-wide mb-1 border-b border-rose-100 pb-1">Civil (Solidaria)</h4>
+                                    <p class="text-[11px] text-slate-600 mt-2 leading-relaxed">Por pago de volúmenes no ejecutados, omisión de multas o daño económico.</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-rose-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <h4 class="font-black text-rose-800 text-[13px] uppercase tracking-wide mb-1 border-b border-rose-100 pb-1">Penal</h4>
+                                    <p class="text-[11px] text-slate-600 mt-2 leading-relaxed">Falsedad ideológica en actas o incumplimiento severo de deberes.</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-rose-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <h4 class="font-black text-rose-800 text-[13px] uppercase tracking-wide mb-1 border-b border-rose-100 pb-1">Ejecutiva (MAE)</h4>
+                                    <p class="text-[11px] text-slate-600 mt-2 leading-relaxed">Por resolución unilateral arbitraria de contratos ignorando informes técnicos.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i data-lucide="file-warning" class="w-5 h-5 mr-2 text-blue-600"></i> Herramientas Preventivas y Transparencia</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold text-sm text-slate-800 flex items-center"><i data-lucide="search" class="w-4 h-4 mr-1.5 text-slate-500"></i> Auditoría ATIA</h4>
+                                        <span class="text-[10px] px-2 py-0.5 rounded font-bold border ${getAtiaStyle(project.fase4Safco.atia)}">${project.fase4Safco.atia}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 mb-3 h-8">Control preventivo interno de calidades y espesores en obra.</p>
+                                    <button onclick="app.showToast('Solicitud enviada a Auditoría Interna', 'info')" class="text-blue-600 text-xs font-bold hover:underline">Solicitar Inspección</button>
+                                </div>
+
+                                <div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold text-sm text-slate-800 flex items-center"><i data-lucide="users" class="w-4 h-4 mr-1.5 text-slate-500"></i> Rendición Cuentas</h4>
+                                        <span class="text-[10px] px-2 py-0.5 rounded font-bold border ${project.fase4Safco.rendicion === 'Realizada' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${project.fase4Safco.rendicion}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 mb-3 h-8">Exposición ante control social de avances y modificaciones.</p>
+                                    <button onclick="app.showToast('Abriendo agenda de rendición pública', 'info')" class="text-blue-600 text-xs font-bold hover:underline">Programar Audiencia</button>
+                                </div>
+
+                                <div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold text-sm text-slate-800 flex items-center"><i data-lucide="bookmark" class="w-4 h-4 mr-1.5 text-slate-500"></i> Archivo EUDO</h4>
+                                        <span class="text-[10px] px-2 py-0.5 rounded font-bold border bg-blue-100 text-blue-800 border-blue-200">Activo</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 mb-3 h-8">Repositorio digital inalterable contra pérdida documental.</p>
+                                    <button onclick="app.changeView('eudo')" class="text-blue-600 text-xs font-bold hover:underline">Ver Repositorio</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            getEudoHTML() {
+                let filesHTML = '';
+                eudoFiles.forEach(f => {
+                    filesHTML += `
+                        <div class="flex justify-between items-center p-3 hover:bg-slate-50 border border-slate-100 rounded-lg transition-colors">
+                            <div class="flex items-center">
+                                <i data-lucide="file-text" class="w-4 h-4 mr-3 text-slate-400"></i>
+                                <span class="text-sm font-medium text-slate-700">${f.name}</span>
+                                <span class="ml-3 px-2 py-0.5 text-[10px] bg-slate-100 text-slate-500 rounded">${f.type}</span>
+                            </div>
+                            <button onclick="app.showToast('Descargando ${f.name}...', 'info')" class="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center group">
+                                Descargar <i data-lucide="download" class="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                return `
+                    <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm border border-slate-200 animate-fade-in mt-6">
+                        <h3 class="text-xl font-extrabold text-slate-800 mb-2 flex items-center"><i data-lucide="folder-open" class="w-6 h-6 mr-2 text-blue-600"></i> Expediente Único Digital de Obra (EUDO)</h3>
+                        <p class="text-sm text-slate-500 mb-6">Archivo digital centralizado para garantizar trazabilidad frente a control ex-post.</p>
+                        <div class="space-y-2 border-t pt-4">
+                            ${filesHTML}
+                        </div>
+                    </div>
+                `;
+            },
+
+            getAuditoriasHTML() {
+                let auditHTML = '';
+                auditData.forEach(a => {
+                    const statusClass = a.status === 'Concluido' ? 'bg-slate-100 text-slate-800 border-slate-300' : 'bg-indigo-100 text-indigo-800 border-indigo-200';
+                    auditHTML += `
+                        <div class="flex justify-between items-center p-4 bg-white hover:shadow-md transition-shadow border border-slate-200 rounded-lg">
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm flex items-center"><i data-lucide="search" class="w-4 h-4 mr-2 text-slate-400"></i> ${a.id} - ${a.type}</p>
+                                <p class="text-xs text-slate-500 mt-1 pl-6">Fecha programada: ${a.date} &bull; Hallazgos: ${a.findings}</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${statusClass}">${a.status}</span>
+                        </div>
+                    `;
+                });
+                return `
+                    <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm border border-slate-200 animate-fade-in mt-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-extrabold text-slate-800 flex items-center"><i data-lucide="search" class="w-6 h-6 mr-2 text-blue-600"></i> Auditorías Técnicas (ATIA)</h3>
+                            <button onclick="app.showToast('Abriendo formulario de solicitud...', 'info')" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Programar Nueva</button>
+                        </div>
+                        <div class="space-y-3">
+                            ${auditHTML}
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderModalList() {
+                const f = state.filters;
+                const filtered = mockProjects.filter(p => {
+                    const matchSearch = p.name.toLowerCase().includes(f.search) || p.id.toLowerCase().includes(f.search) || p.contratista.toLowerCase().includes(f.search);
+                    const isFinished = p.advanceFisicoReal >= 100;
+                    const matchStatus = f.status === 'Todos' || (f.status === 'Concluido' && isFinished) || (f.status === 'En Curso' && !isFinished);
+                    const matchMinBudget = f.minBudget === '' || p.budgetActual >= Number(f.minBudget);
+                    const matchMaxBudget = f.maxBudget === '' || p.budgetActual <= Number(f.maxBudget);
+                    const matchMinDate = f.minDate === '' || new Date(p.startDate) >= new Date(f.minDate);
+                    const matchMaxDate = f.maxDate === '' || new Date(p.startDate) <= new Date(f.maxDate);
+
+                    return matchSearch && matchStatus && matchMinBudget && matchMaxBudget && matchMinDate && matchMaxDate;
+                });
+
+                document.getElementById('modal-result-count').textContent = `Mostrando ${filtered.length} proyectos encontrados`;
+                const container = document.getElementById('modal-results-container');
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-slate-400 py-10 mt-10">
+                            <i data-lucide="search-x" class="w-12 h-12 mb-3 opacity-20"></i>
+                            <p class="text-sm font-medium">No se encontraron proyectos con los filtros aplicados.</p>
+                        </div>
+                    `;
+                } else {
+                    let html = '';
+                    filtered.forEach(p => {
+                        const isActive = p.id === state.selectedProjectId;
+                        const isFinished = p.advanceFisicoReal >= 100;
+                        const cardClasses = isActive 
+                            ? 'bg-blue-50 border-blue-300 shadow-sm ring-1 ring-blue-300' 
+                            : 'bg-white border-slate-200 hover:border-blue-400 hover:shadow-md';
+                        const titleClass = isActive ? 'text-blue-900' : 'text-slate-800 group-hover:text-blue-700';
+                        const statusBadge = isFinished 
+                            ? '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold border bg-emerald-100 text-emerald-700 border-emerald-200">Concluido</span>'
+                            : '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold border bg-slate-100 text-slate-700 border-slate-200">En Curso</span>';
+                        
+                        html += `
+                            <div onclick="app.selectProject('${p.id}')" class="group cursor-pointer rounded-xl border p-4 transition-all duration-200 ${cardClasses}">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-xs font-mono font-bold text-slate-500">${p.id}</span>
+                                            ${isActive ? '<span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold shadow-sm">SELECCIONADO</span>' : ''}
+                                            ${statusBadge}
+                                        </div>
+                                        <h4 class="font-bold text-sm ${titleClass}">${p.name}</h4>
+                                    </div>
+                                    <div class="text-right flex-shrink-0">
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase">Presupuesto</p>
+                                        <p class="font-black text-slate-700 text-sm">Bs. ${p.budgetActual.toLocaleString('es-BO')}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4 text-xs text-slate-500 mt-3 pt-3 border-t border-slate-100/80">
+                                    <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3 text-slate-400"></i> ${p.contratista}</span>
+                                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i> Inicio: ${p.startDate}</span>
+                                    <div class="ml-auto w-24">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-[10px]">Avance</span>
+                                            <span class="text-[10px] font-bold text-slate-700">${p.advanceFisicoReal}%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                            <div class="h-1.5 rounded-full ${isFinished ? 'bg-emerald-500' : 'bg-blue-600'}" style="width: ${p.advanceFisicoReal}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+                lucide.createIcons();
+            }
+        };
+
+        // Initialize App on load
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>
