@@ -132,7 +132,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex-1 max-w-3xl">
                     <div class="flex items-center gap-3 mb-2">
-                        <span id="header-status-badge"></span>
+                        <div id="header-status-badge"></div>
                         
                         <div class="group relative inline-block">
                             <button onclick="app.toggleProjectModal()" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg px-3 py-1.5 transition-colors shadow-sm">
@@ -146,16 +146,32 @@
                         </div>
                     </div>
                     <h2 id="header-project-name" class="text-2xl font-extrabold text-slate-800 leading-tight"></h2>
-                    <div class="flex flex-wrap text-sm text-slate-500 mt-2 gap-x-6 gap-y-1">
+                    
+                    <div class="flex flex-wrap text-sm text-slate-500 mt-2 gap-x-6 gap-y-2">
                         <span class="flex items-center">
                             <i data-lucide="users" class="w-4 h-4 mr-1.5 text-slate-400"></i> 
                             <span class="font-semibold text-slate-700 mr-1">Contratista:</span> 
                             <span id="header-contractor"></span>
                         </span>
                         <span class="flex items-center">
+                            <i data-lucide="building" class="w-4 h-4 mr-1.5 text-slate-400"></i> 
+                            <span class="font-semibold text-slate-700 mr-1">Unidad Ejecutora:</span> 
+                            <span id="header-unidad"></span>
+                        </span>
+                        <span class="flex items-center">
                             <i data-lucide="activity" class="w-4 h-4 mr-1.5 text-slate-400"></i> 
                             <span class="font-semibold text-slate-700 mr-1">Presupuesto Vigente:</span> 
                             Bs <span id="header-budget"></span>
+                        </span>
+                        <span class="flex items-center">
+                            <i data-lucide="calendar-clock" class="w-4 h-4 mr-1.5 text-slate-400"></i> 
+                            <span class="font-semibold text-slate-700 mr-1">Plazo:</span> 
+                            <span id="header-plazo"></span>
+                        </span>
+                        <span class="flex items-center">
+                            <i data-lucide="play-circle" class="w-4 h-4 mr-1.5 text-slate-400"></i> 
+                            <span class="font-semibold text-slate-700 mr-1">Orden de Proceder:</span> 
+                            <span id="header-proceder"></span>
                         </span>
                     </div>
                 </div>
@@ -260,6 +276,9 @@
                 id: "PRJ-2026-001",
                 name: "Construcción Hospital Nivel II - Distrito Sur",
                 contratista: "Constructora Andes S.R.L.",
+                unidadEjecutora: "Dirección de Infraestructura de Salud",
+                plazo: "360 días calendario",
+                fechaOrdenProceder: "2026-01-20",
                 budgetOriginal: 15000000,
                 budgetActual: 15750000,
                 startDate: "2026-01-15",
@@ -273,28 +292,43 @@
                 modifications: [
                     { type: "Orden de Trabajo 01", amount: 0, date: "2026-03-10", percent: 0 },
                     { type: "Orden de Cambio 01", amount: 750000, date: "2026-05-22", percent: 5 }
+                ],
+                fotografias: [
+                    { url: "https://placehold.co/600x400/0f172a/ffffff?text=Excavaciones", fecha: "15/07/2026", descripcion: "Trabajos de excavación profunda para fundaciones en el sector Sur.", autor: "Ing. Supervisor" },
+                    { url: "https://placehold.co/600x400/1e293b/ffffff?text=Vaciado+Losa", fecha: "02/08/2026", descripcion: "Vaciado de losa de fundación (H21) y toma de probetas.", autor: "Ing. Supervisor" },
+                    { url: "https://placehold.co/600x400/334155/ffffff?text=Acero+Estructural", fecha: "10/08/2026", descripcion: "Armado de acero estructural en columnas nivel 1.", autor: "Fiscal de Obra" }
                 ]
             },
             {
                 id: "PRJ-2026-002",
                 name: "Asfaltado Ruta Departamental 24",
                 contratista: "Vialidad Nacional S.A.",
+                unidadEjecutora: "Servicio Departamental de Caminos",
+                plazo: "450 días calendario",
+                fechaOrdenProceder: "2026-02-15",
                 budgetOriginal: 32000000,
                 budgetActual: 32000000,
                 startDate: "2026-02-01",
                 advanceFisicoReal: 25.2,
-                advanceFisicoProgramado: 38.0, // Retraso crítico > 10%
+                advanceFisicoProgramado: 38.0, 
                 hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
                 mct: { liberacion: true, suelos: false, computos: true, precios: true },
                 fase2Docs: { libroOrdenes: "Desactualizado", dossierCalidad: "Observado" },
                 fase3Cierre: { asBuilt: false, manual: false, liquidacion: false, estado: "Pendiente" },
                 fase4Safco: { atia: "En Ejecución", rendicion: "Realizada" },
-                modifications: []
+                modifications: [],
+                fotografias: [
+                    { url: "https://placehold.co/600x400/0f172a/ffffff?text=Capa+Subbase", fecha: "20/07/2026", descripcion: "Conformación y compactación de capa subbase.", autor: "Fiscal de Obra" },
+                    { url: "https://placehold.co/600x400/1e293b/ffffff?text=Imprimacion", fecha: "05/08/2026", descripcion: "Riego de liga e imprimación asfáltica tramo 1.", autor: "Ing. Supervisor" }
+                ]
             },
             {
                 id: "PRJ-2025-003",
                 name: "Unidad Educativa 'Simón Bolívar'",
                 contratista: "Constructora Horizonte",
+                unidadEjecutora: "Dirección de Educación y Deportes",
+                plazo: "240 días calendario",
+                fechaOrdenProceder: "2025-08-25",
                 budgetOriginal: 5500000,
                 budgetActual: 5775000,
                 startDate: "2025-08-10",
@@ -307,12 +341,19 @@
                 fase4Safco: { atia: "Concluida", rendicion: "Realizada" },
                 modifications: [
                     { type: "Orden de Cambio 01", amount: 275000, date: "2025-11-15", percent: 5 }
+                ],
+                fotografias: [
+                    { url: "https://placehold.co/600x400/0f172a/ffffff?text=Pintura+Final", fecha: "10/12/2025", descripcion: "Trabajos de acabados y pintura final exterior.", autor: "Ing. Supervisor" },
+                    { url: "https://placehold.co/600x400/1e293b/ffffff?text=Mobiliario", fecha: "15/12/2025", descripcion: "Instalación de mobiliario escolar (Pupitres).", autor: "Fiscal de Obra" }
                 ]
             },
             {
                 id: "PRJ-2026-004",
                 name: "Sistema de Agua Potable - Comunidad Norte",
                 contratista: "Aguas Claras S.A.",
+                unidadEjecutora: "Unidad de Saneamiento Básico",
+                plazo: "180 días calendario",
+                fechaOrdenProceder: "2026-06-20",
                 budgetOriginal: 1200000,
                 budgetActual: 1200000,
                 startDate: "2026-06-10",
@@ -323,12 +364,16 @@
                 fase2Docs: { libroOrdenes: "Al día", dossierCalidad: "En proceso" },
                 fase3Cierre: { asBuilt: false, manual: false, liquidacion: false, estado: "Pendiente" },
                 fase4Safco: { atia: "No Programada", rendicion: "Pendiente" },
-                modifications: []
+                modifications: [],
+                fotografias: [] // Sin fotografías aún
             },
             {
                 id: "PRJ-2025-089",
                 name: "Construcción Puente Vehicular 'El Carmen'",
                 contratista: "Consorcio Puentes de Bolivia",
+                unidadEjecutora: "Dirección de Obras Públicas",
+                plazo: "300 días calendario",
+                fechaOrdenProceder: "2025-01-30",
                 budgetOriginal: 8500000,
                 budgetActual: 9100000,
                 startDate: "2025-01-15",
@@ -341,6 +386,9 @@
                 fase4Safco: { atia: "Concluida", rendicion: "Realizada" },
                 modifications: [
                     { type: "Contrato Modificatorio 01", amount: 600000, date: "2025-08-10", percent: 7.05 }
+                ],
+                fotografias: [
+                    { url: "https://placehold.co/600x400/0f172a/ffffff?text=Prueba+Carga", fecha: "15/10/2025", descripcion: "Prueba de carga estructural sobre superestructura.", autor: "Comisión Técnica" }
                 ]
             }
         ];
@@ -486,7 +534,10 @@
                 document.getElementById('header-db-count').textContent = `(${mockProjects.length} BD)`;
                 document.getElementById('header-project-name').textContent = project.name;
                 document.getElementById('header-contractor').textContent = project.contratista;
+                document.getElementById('header-unidad').textContent = project.unidadEjecutora;
                 document.getElementById('header-budget').textContent = project.budgetActual.toLocaleString('es-BO');
+                document.getElementById('header-plazo').textContent = project.plazo;
+                document.getElementById('header-proceder').textContent = project.fechaOrdenProceder;
             },
 
             renderMainContent() {
@@ -647,12 +698,32 @@
                     project.modifications.forEach(mod => {
                         let limit = mod.type.includes("Trabajo") ? "0% incremento" : mod.type.includes("Cambio") ? "Hasta 10%" : "Hasta 5% (Total 15%)";
                         modsHTML += `
-                            <tr class="border-b border-slate-100">
+                            <tr class="border-b border-slate-100 hover:bg-slate-50">
                                 <td class="p-3 font-medium text-slate-800">${mod.type}</td>
                                 <td class="p-3 text-slate-600 text-xs">${limit}</td>
                                 <td class="p-3 font-bold text-slate-700 text-sm">Bs. ${mod.amount.toLocaleString('es-BO')} (${mod.percent}%)</td>
                                 <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] uppercase font-bold">${mod.type.includes("Cambio") || mod.type.includes("Contrato") ? 'MAE / Delegado' : 'Supervisor'}</span></td>
                             </tr>
+                        `;
+                    });
+                }
+
+                let fotosHTML = '';
+                if(!project.fotografias || project.fotografias.length === 0) {
+                    fotosHTML = `<div class="w-full text-center text-slate-500 py-8 text-sm italic border-2 border-dashed border-slate-200 rounded-xl bg-slate-50"><i data-lucide="camera-off" class="w-8 h-8 mx-auto mb-2 opacity-30"></i>No hay fotografías de respaldo registradas en el periodo actual.</div>`;
+                } else {
+                    project.fotografias.forEach(f => {
+                        fotosHTML += `
+                            <div class="snap-start flex-shrink-0 w-72 bg-white border border-slate-200 rounded-xl overflow-hidden group hover:shadow-lg transition-all duration-300">
+                                <div class="h-44 relative overflow-hidden bg-slate-200">
+                                     <img src="${f.url}" alt="Foto de obra" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                     <div class="absolute top-2 right-2 bg-slate-900/80 text-white text-[10px] px-2 py-1 rounded shadow-sm backdrop-blur-md">${f.fecha}</div>
+                                </div>
+                                <div class="p-3">
+                                    <p class="text-xs text-slate-700 font-medium line-clamp-2 mb-2 leading-relaxed h-8" title="${f.descripcion}">${f.descripcion}</p>
+                                    <p class="text-[10px] text-slate-500 flex items-center font-bold"><i data-lucide="user-check" class="w-3 h-3 mr-1.5 text-blue-500"></i> ${f.autor}</p>
+                                </div>
+                            </div>
                         `;
                     });
                 }
@@ -698,7 +769,7 @@
                             <!-- Semáforo -->
                             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                                 <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i data-lucide="alert-circle" class="w-5 h-5 mr-2 text-blue-600"></i> Ficha de Alerta Temprana</h3>
-                                <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4">
+                                <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4 hover:shadow-md transition-shadow">
                                     <div class="w-4 h-4 rounded-full mt-1 flex-shrink-0 shadow-lg animate-pulse-slow ${semaforo.color}"></div>
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
@@ -712,15 +783,31 @@
                                 
                                 <h4 class="text-[11px] uppercase tracking-wider font-bold text-slate-500 mb-2 border-t pt-3">Control Documental Previo (Ley 1178)</h4>
                                 <ul class="text-sm text-slate-600 space-y-2">
-                                    <li class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100">
+                                    <li class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100 hover:bg-slate-100 transition-colors">
                                         <span class="flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2 text-slate-400"></i> Libro de Órdenes:</span> 
                                         <span class="font-semibold text-slate-800">${project.fase2Docs.libroOrdenes}</span>
                                     </li>
-                                    <li class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100">
+                                    <li class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100 hover:bg-slate-100 transition-colors">
                                         <span class="flex items-center"><i data-lucide="flask-conical" class="w-4 h-4 mr-2 text-slate-400"></i> Dossier de Calidad:</span> 
                                         <span class="font-semibold text-slate-800">${project.fase2Docs.dossierCalidad}</span>
                                     </li>
                                 </ul>
+                            </div>
+                        </div>
+
+                        <!-- Control Fotográfico -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <div class="flex justify-between items-center mb-5">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800 flex items-center"><i data-lucide="camera" class="w-5 h-5 mr-2 text-blue-600"></i> Reporte Fotográfico (Respaldo Planilla)</h3>
+                                    <p class="text-xs text-slate-500 mt-1">Evidencia visual obligatoria para corroborar volúmenes ejecutados.</p>
+                                </div>
+                                <button onclick="app.showToast('Abriendo interfaz de captura/subida de evidencia...', 'info')" class="text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg font-bold flex items-center transition-colors">
+                                    <i data-lucide="upload-cloud" class="w-4 h-4 mr-1.5"></i> Subir Evidencia
+                                </button>
+                            </div>
+                            <div class="flex overflow-x-auto gap-4 pb-2 snap-x hide-scrollbar" style="scrollbar-width: thin;">
+                                ${fotosHTML}
                             </div>
                         </div>
 
@@ -946,7 +1033,7 @@
             renderModalList() {
                 const f = state.filters;
                 const filtered = mockProjects.filter(p => {
-                    const matchSearch = p.name.toLowerCase().includes(f.search) || p.id.toLowerCase().includes(f.search) || p.contratista.toLowerCase().includes(f.search);
+                    const matchSearch = p.name.toLowerCase().includes(f.search) || p.id.toLowerCase().includes(f.search) || p.contratista.toLowerCase().includes(f.search) || p.unidadEjecutora.toLowerCase().includes(f.search);
                     const isFinished = p.advanceFisicoReal >= 100;
                     const matchStatus = f.status === 'Todos' || (f.status === 'Concluido' && isFinished) || (f.status === 'En Curso' && !isFinished);
                     const matchMinBudget = f.minBudget === '' || p.budgetActual >= Number(f.minBudget);
@@ -997,8 +1084,8 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-4 text-xs text-slate-500 mt-3 pt-3 border-t border-slate-100/80">
-                                    <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3 text-slate-400"></i> ${p.contratista}</span>
-                                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i> Inicio: ${p.startDate}</span>
+                                    <span class="flex items-center gap-1"><i data-lucide="building" class="w-3 h-3 text-slate-400"></i> ${p.unidadEjecutora}</span>
+                                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i> Orden: ${p.fechaOrdenProceder}</span>
                                     <div class="ml-auto w-24">
                                         <div class="flex justify-between mb-1">
                                             <span class="text-[10px]">Avance</span>
