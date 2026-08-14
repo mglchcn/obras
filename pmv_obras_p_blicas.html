@@ -270,7 +270,8 @@
                 budgetOriginal: 15000000,
                 budgetActual: 15750000,
                 startDate: "2026-01-15",
-                advanceFinanciero: 39.5,
+                advanceFinancieroReal: 39.5,
+                advanceFinancieroProgramado: 45.0,
                 advanceFisicoReal: 42.5,
                 advanceFisicoProgramado: 48.0,
                 hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
@@ -298,7 +299,8 @@
                 budgetOriginal: 32000000,
                 budgetActual: 32000000,
                 startDate: "2026-02-01",
-                advanceFinanciero: 22.0,
+                advanceFinancieroReal: 22.0,
+                advanceFinancieroProgramado: 35.0,
                 advanceFisicoReal: 25.2,
                 advanceFisicoProgramado: 38.0, 
                 hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
@@ -322,7 +324,8 @@
                 budgetOriginal: 5500000,
                 budgetActual: 5775000,
                 startDate: "2025-08-10",
-                advanceFinanciero: 100,
+                advanceFinancieroReal: 100,
+                advanceFinancieroProgramado: 100,
                 advanceFisicoReal: 100,
                 advanceFisicoProgramado: 100,
                 hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
@@ -348,7 +351,8 @@
                 budgetOriginal: 1200000,
                 budgetActual: 1200000,
                 startDate: "2026-06-10",
-                advanceFinanciero: 10.0,
+                advanceFinancieroReal: 10.0,
+                advanceFinancieroProgramado: 12.0,
                 advanceFisicoReal: 15.0,
                 advanceFisicoProgramado: 14.5,
                 hitosFase1: { designacion: true, terreno: true, mct: false, ordenProceder: false },
@@ -369,7 +373,8 @@
                 budgetOriginal: 8500000,
                 budgetActual: 9100000,
                 startDate: "2025-01-15",
-                advanceFinanciero: 95.0,
+                advanceFinancieroReal: 95.0,
+                advanceFinancieroProgramado: 100,
                 advanceFisicoReal: 100,
                 advanceFisicoProgramado: 100,
                 hitosFase1: { designacion: true, terreno: true, mct: true, ordenProceder: true },
@@ -723,17 +728,7 @@
                                 
                                 <div class="w-full mb-5">
                                     <div class="flex justify-between mb-1">
-                                        <span class="text-sm font-semibold text-slate-700">Avance financiero</span>
-                                        <span class="text-sm font-bold text-slate-900">${project.advanceFinanciero.toFixed(1)}%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
-                                        <div class="h-full rounded-full bg-amber-500 transition-all duration-1000" style="width: ${project.advanceFinanciero}%"></div>
-                                    </div>
-                                </div>
-
-                                <div class="w-full mb-5">
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-sm font-semibold text-slate-700">Avance real</span>
+                                        <span class="text-sm font-semibold text-slate-700">Avance Físico Real</span>
                                         <span class="text-sm font-bold text-slate-900">${project.advanceFisicoReal.toFixed(1)}%</span>
                                     </div>
                                     <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
@@ -741,13 +736,33 @@
                                     </div>
                                 </div>
 
-                                <div class="w-full mb-2">
+                                <div class="w-full mb-5">
                                     <div class="flex justify-between mb-1">
-                                        <span class="text-sm font-semibold text-slate-700">Avance programado</span>
+                                        <span class="text-sm font-semibold text-slate-700">Avance Físico Programado</span>
                                         <span class="text-sm font-bold text-slate-900">${project.advanceFisicoProgramado.toFixed(1)}%</span>
                                     </div>
                                     <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
                                         <div class="h-full rounded-full bg-slate-400 transition-all duration-1000" style="width: ${project.advanceFisicoProgramado}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="w-full mb-5">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-semibold text-slate-700">Avance Financiero Real</span>
+                                        <span class="text-sm font-bold text-slate-900">${project.advanceFinancieroReal.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
+                                        <div class="h-full rounded-full bg-amber-500 transition-all duration-1000" style="width: ${project.advanceFinancieroReal}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="w-full mb-2">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-semibold text-slate-700">Avance Financiero Programado</span>
+                                        <span class="text-sm font-bold text-slate-900">${project.advanceFinancieroProgramado.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
+                                        <div class="h-full rounded-full bg-amber-300 transition-all duration-1000" style="width: ${project.advanceFinancieroProgramado}%"></div>
                                     </div>
                                 </div>
                             </div>
